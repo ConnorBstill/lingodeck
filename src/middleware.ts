@@ -10,3 +10,4 @@ export const config = {
     '/(api|trpc)(.*)',
   ],
 }
+// '/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)'

@@ -8,6 +8,7 @@ const Images = async () => {
   const images = await db.query.images.findMany({
     orderBy: (model, { desc }) => desc(model.id)
   });
+
   return (
     <div className="flex flex-wrap">
       {[...images, ...images].map((image, index) => (
