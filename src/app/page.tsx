@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { db } from "~/server/db";
 
+export const dynamic = 'force-dynamic';
+
 const urls = [
   'https://utfs.io/f/RhgEDhb3FCXDmzgWUsQIHJBQRNDT8PuUhFqbijE2AXafyoCv',
   'https://utfs.io/f/RhgEDhb3FCXDHyynWOwigUaRfSc3JOQVl9oC0jhWp1nKxd2k',
