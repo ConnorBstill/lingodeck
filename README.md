@@ -38,7 +38,7 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 - [x] Tidy up build process
 - [x] Actually set up a database
 - [x] Attach database to UI
-- [ ] Add authentication
+- [x] Add authentication
 - [ ] Add image upload
 - [ ] Error management (Sentry)
 - [ ] Routing/image page (parallel route)
