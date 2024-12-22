@@ -1,15 +1,27 @@
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/
-import { S3Client, ListObjectsCommand, DeleteObjectCommand, PutObjectCommand, CopyObjectCommand, GetObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  ListObjectsCommand,
+  DeleteObjectCommand,
+  PutObjectCommand,
+  CopyObjectCommand,
+  GetObjectCommand,
+  PutObjectCommandInput,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/ListObjectsCommand
-export const fetchBucketObjects = async (bucketName: string, s3Instance: S3Client): Promise<any> => {
-  const input = { // ListObjectsRequest
-    Bucket: bucketName
+export const fetchBucketObjects = async (
+  bucketName: string,
+  s3Instance: S3Client,
+): Promise<any> => {
+  const input = {
+    // ListObjectsRequest
+    Bucket: bucketName,
   };
   const command = new ListObjectsCommand(input);
   const response = await s3Instance.send(command);
-  
+
   // const objs = await new Promise((resolve, reject) => {
   //   s3Instance.send(
   //     {
@@ -30,13 +42,17 @@ export const fetchBucketObjects = async (bucketName: string, s3Instance: S3Clien
 
   //   return objs;
   // });
-}
+};
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/ListObjectsCommand/
 /**
  * NOTE: without trailing `/` in the `prefix`, objects will be fetched from `/prefix*` instead of `/prefix` exact
  */
-export const fetchBucketObjectsByPrefix = async(bucketName: string, prefix: string, s3Instance: S3Client): Promise<any> => {
+export const fetchBucketObjectsByPrefix = async (
+  bucketName: string,
+  prefix: string,
+  s3Instance: S3Client,
+): Promise<any> => {
   const input = {
     Bucket: bucketName,
     Region: process.env.AWS_S3_REGION,
@@ -46,7 +62,7 @@ export const fetchBucketObjectsByPrefix = async(bucketName: string, prefix: stri
   const command = new ListObjectsCommand(input);
   const response = await s3Instance.send(command);
 
-  return response
+  return response;
 
   // console.log('await s3Instance.send(command);', response)
   // const objs = await new Promise((resolve, reject) => {
@@ -70,16 +86,20 @@ export const fetchBucketObjectsByPrefix = async(bucketName: string, prefix: stri
   // });
 
   // return objs;
-}
+};
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/DeleteObjectCommand/
 /**
  * NOTE: without trailing `/` in the `key`, the delete will occur against `/key*` instead of `/key` exact
  */
-export const deleteBucketObjectByKey = async (bucket: string, key: string, s3Instance: S3Client): Promise<any> => {
+export const deleteBucketObjectByKey = async (
+  bucket: string,
+  key: string,
+  s3Instance: S3Client,
+): Promise<any> => {
   const input = {
-    "Bucket": "examplebucket",
-    "Key": "objectkey.jpg"
+    Bucket: 'examplebucket',
+    Key: 'objectkey.jpg',
   };
   const command = new DeleteObjectCommand(input);
   const response = await s3Instance.send(command);
@@ -98,10 +118,10 @@ export const deleteBucketObjectByKey = async (bucket: string, key: string, s3Ins
   //     }
   //   );
   // });
-}
+};
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/PutObjectCommand/
-export const uploadMedia = async(
+export const uploadMedia = async (
   bucketName: string,
   keyName: string,
   body: any,
@@ -110,7 +130,7 @@ export const uploadMedia = async(
   contentType?: 'image/jpeg' | 'image/jpg' | 'image/png' | 'application/pdf',
   contentEncoding?: string,
 ): Promise<any> => {
-  console.log('uploadMediafileName', fileName)
+  console.log('uploadMediafileName', fileName);
   const input: PutObjectCommandInput = {
     Body: body,
     Bucket: bucketName,
@@ -119,17 +139,21 @@ export const uploadMedia = async(
     Key: keyName,
     ContentLength: body.data.length,
     Metadata: {
-      'x-amz-meta-filename': 'test'
-    }
-  }
+      'x-amz-meta-filename': 'test',
+    },
+  };
 
   const command = new PutObjectCommand(input);
   const response = await s3Instance.send(command);
 
   return response;
-}
+};
 
-export const fetchSignedUrl = async(bucketName: string, keyName: string, s3Instance: S3Client): Promise<any> => {
+export const fetchSignedUrl = async (
+  bucketName: string,
+  keyName: string,
+  s3Instance: S3Client,
+): Promise<any> => {
   const params = {
     Bucket: bucketName,
     Key: keyName,
@@ -137,32 +161,34 @@ export const fetchSignedUrl = async(bucketName: string, keyName: string, s3Insta
 
   try {
     const command = new GetObjectCommand(params);
-    const signedUrl = await getSignedUrl(s3Instance, command, { expiresIn: 3600 })
+    const signedUrl = await getSignedUrl(s3Instance, command, {
+      expiresIn: 3600,
+    });
 
     return signedUrl;
   } catch (err) {
-    console.log('fetchSignedUrl', fetchSignedUrl)
+    console.log('fetchSignedUrl', fetchSignedUrl);
   }
 
-//   const url = await new Promise((resolve, reject) => {
-//     s3Instance.getSignedUrl(
-//       'getObject',
-//       {
-//         Bucket: bucketName,
-//         Key: keyName
-//       },
-//       (err, url) => {
-//         if (err) {
-//           reject(err);
-//         } else {
-//           resolve(url);
-//         }
-//       }
-//     );
-//   });
+  //   const url = await new Promise((resolve, reject) => {
+  //     s3Instance.getSignedUrl(
+  //       'getObject',
+  //       {
+  //         Bucket: bucketName,
+  //         Key: keyName
+  //       },
+  //       (err, url) => {
+  //         if (err) {
+  //           reject(err);
+  //         } else {
+  //           resolve(url);
+  //         }
+  //       }
+  //     );
+  //   });
 
-//   return url;
-}
+  //   return url;
+};
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/CopyObjectCommand/
 export const copyObject = async (
@@ -175,12 +201,12 @@ export const copyObject = async (
   _options?: {
     'x-amz-meta-filename': string;
     fileName: any;
-  }
+  },
 ): Promise<any> => {
   const input = {
-    "Bucket": "destinationbucket",
-    "CopySource": "/sourcebucket/HappyFacejpg",
-    "Key": "HappyFaceCopyjpg"
+    Bucket: 'destinationbucket',
+    CopySource: '/sourcebucket/HappyFacejpg',
+    Key: 'HappyFaceCopyjpg',
   };
   const command = new CopyObjectCommand(input);
   const response = await s3Instance.send(command);
@@ -210,7 +236,7 @@ export const copyObject = async (
   //     }
   //   );
   // });
-}
+};
 
 export const createS3Instance = async (): Promise<S3Client> => {
   return new S3Client({
@@ -220,10 +246,10 @@ export const createS3Instance = async (): Promise<S3Client> => {
     },
     region: process.env.AWS_S3_REGION,
   });
-}
+};
 
-export const generateKey = (userId: string , fileName: string) => {
+export const generateKey = (userId: string, fileName: string) => {
   const timestamp = Date.now();
-  const extension = fileName.split(".").pop(); // Get file extension
+  const extension = fileName.split('.').pop(); // Get file extension
   return `${userId}/images/${timestamp}.${extension}`;
-}
+};
