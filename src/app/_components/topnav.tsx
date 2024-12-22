@@ -1,24 +1,40 @@
 "use client"
 
 import { ChangeEvent } from "react";
-
 import { SignedOut, SignInButton, UserButton, SignedIn } from "@clerk/nextjs";
 
 export const TopNav = () => {
   const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
-    console.log('event', event.target.files)
-    const file = event.target.files![0]
+    const file = event.target.files?.[0]
 
-    const formData = new FormData()
-    formData.append(file!.name, file!);
+    const buffer = await readFileAsBuffer(file!)
 
     const response = await fetch('api/image', {
       method: 'POST',
-      // headers: {
-      //   'Content-Type': 'multipart/form-data'
-      // },
-      body: formData
-    })
+      headers: { 
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify({
+        fileName: file?.name,
+        contentType: file?.type,
+        fileBuffer: buffer
+      })
+    });
+  }
+
+  const readFileAsBuffer = (file: File): Promise<Buffer> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          resolve(Buffer.from(reader.result as ArrayBuffer));
+        } else {
+          reject(new Error("Failed to read file"));
+        }
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
+    });
   }
 
   return (
