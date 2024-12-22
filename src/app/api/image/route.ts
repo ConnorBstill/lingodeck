@@ -1,16 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 
 import {
   createS3Instance,
   fetchBucketObjectsByPrefix,
-  fetchSignedUrl,
+  fetchObjectsByKey,
   generateKey,
   uploadMedia,
 } from '../../../services/aws-s3-service';
 
 export const GET = async (request: NextRequest) => {
-  return new NextResponse(JSON.stringify({ message: 'Hello, world!' }), {
+  const userId = request.headers.get('User');
+
+  if (!userId) return new NextResponse('Unauthorized', { status: 401 });
+
+  const s3 = await createS3Instance();
+
+  const response = await fetchBucketObjectsByPrefix(
+    process.env.AWS_BUCKET_NAME!,
+    `${userId}/images`,
+    s3
+  );
+
+  const images = await fetchObjectsByKey(process.env.AWS_BUCKET_NAME!, response.Contents, s3);
+
+  return new NextResponse(JSON.stringify({ data: images }), {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
@@ -23,8 +37,8 @@ export const POST = async (request: NextRequest) => {
 
   if (!userId) return new NextResponse('Unauthorized', { status: 401 });
 
-  const file = await request.json();
   const s3 = await createS3Instance();
+  const file = await request.json();
   const key = generateKey(userId, file.fileName);
 
   await uploadMedia(

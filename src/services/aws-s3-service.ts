@@ -165,6 +165,8 @@ export const fetchSignedUrl = async (
       expiresIn: 3600,
     });
 
+    console.log('signedUrl', signedUrl)
+
     return signedUrl;
   } catch (err) {
     console.log('fetchSignedUrl', fetchSignedUrl);
@@ -248,8 +250,27 @@ export const createS3Instance = async (): Promise<S3Client> => {
   });
 };
 
+export const fetchObjectsByKey = async (
+  bucketName: string,
+  listContents: any[],
+  s3Instance: S3Client
+): Promise<any> => {
+  const promises = [];
+
+  for (let i = 0; i < listContents.length; i++) {
+    const key = listContents[i].Key;
+
+    promises.push(await fetchSignedUrl(bucketName, key, s3Instance))
+  }
+
+  const images = await Promise.all(promises);
+
+  return images;
+}
+
 export const generateKey = (userId: string, fileName: string) => {
   const timestamp = Date.now();
   const extension = fileName.split('.').pop(); // Get file extension
   return `${userId}/images/${timestamp}.${extension}`;
 };
+
