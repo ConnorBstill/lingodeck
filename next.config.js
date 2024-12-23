@@ -6,6 +6,9 @@ import './src/env.js';
 
 /** @type {import("next").NextConfig} */
 const config = {
+  images: {
+    remotePatterns: [{ hostname: 'lingodeck2.s3.us-west-1.amazonaws.com' }],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -1,5 +1,6 @@
 import { SignedOut, SignedIn } from '@clerk/nextjs';
 import { auth, currentUser } from '@clerk/nextjs/server';
+import Image from 'next/image';
 import Link from 'next/link';
 import { db } from '~/server/db';
 
@@ -25,7 +26,14 @@ const Images = async () => {
     <div className="flex flex-wrap">
       {data.map((image: any, index: number) => (
         <div key={`${image.id}${index}`} className="flex w-48 flex-col p-4">
-          <img src={image} className="h-32 w-32" alt="image" />
+          <Image
+            src={image}
+            style={{ objectFit: 'contain' }}
+            width={192}
+            height={192}
+            className="h-32 w-32"
+            alt="image"
+          />
           {/* <div>{image.name}</div> */}
         </div>
       ))}
