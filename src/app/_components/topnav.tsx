@@ -4,6 +4,8 @@ import { ChangeEvent } from 'react';
 import { SignedOut, SignInButton, UserButton, SignedIn } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
+import { toast } from 'sonner';
+
 export const TopNav = () => {
   const router = useRouter();
 
@@ -11,6 +13,11 @@ export const TopNav = () => {
     const file = event.target.files?.[0];
 
     const buffer = await readFileAsBuffer(file!);
+
+    toast('Uploading...', {
+      duration: 7000,
+      id: 'image-upload-begin'
+    });
 
     const response = await fetch('api/image', {
       method: 'POST',
@@ -23,6 +30,9 @@ export const TopNav = () => {
         fileBuffer: buffer,
       }),
     });
+
+    toast.dismiss('image-upload-begin');
+    toast('Upload complete!', { duration: 2000 })
 
     router.refresh();
   };

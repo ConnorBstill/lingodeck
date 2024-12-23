@@ -7,6 +7,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs';
+import { Toaster } from '~/components/ui/sonner';
 
 import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
@@ -28,6 +29,7 @@ export default function RootLayout({
         <body>
           <TopNav />
           {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
