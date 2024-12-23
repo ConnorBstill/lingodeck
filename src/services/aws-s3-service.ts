@@ -16,32 +16,13 @@ export const fetchBucketObjects = async (
   s3Instance: S3Client,
 ): Promise<any> => {
   const input = {
-    // ListObjectsRequest
     Bucket: bucketName,
   };
+
   const command = new ListObjectsCommand(input);
   const response = await s3Instance.send(command);
 
-  // const objs = await new Promise((resolve, reject) => {
-  //   s3Instance.send(
-  //     {
-  //       Bucket: bucketName
-  //     },
-  //     (err, data) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         resolve(
-  //           data.Contents.filter(obj => {
-  //             return obj;
-  //           })
-  //         );
-  //       }
-  //     }
-  //   );
-
-  //   return objs;
-  // });
+  return response;
 };
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/ListObjectsCommand/
@@ -56,36 +37,13 @@ export const fetchBucketObjectsByPrefix = async (
   const input = {
     Bucket: bucketName,
     Region: process.env.AWS_S3_REGION,
-    // MaxKeys: 2,
     Prefix: prefix,
   };
+
   const command = new ListObjectsCommand(input);
   const response = await s3Instance.send(command);
 
   return response;
-
-  // console.log('await s3Instance.send(command);', response)
-  // const objs = await new Promise((resolve, reject) => {
-  //   s3Instance.listObjects(
-  //     {
-  //       Bucket: bucketName,
-  //       Prefix: prefix
-  //     },
-  //     (err, data) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         resolve(
-  //           data.Contents.filter(obj => {
-  //             return obj;
-  //           })
-  //         );
-  //       }
-  //     }
-  //   );
-  // });
-
-  // return objs;
 };
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/DeleteObjectCommand/
@@ -101,23 +59,9 @@ export const deleteBucketObjectByKey = async (
     Bucket: 'examplebucket',
     Key: 'objectkey.jpg',
   };
+
   const command = new DeleteObjectCommand(input);
   const response = await s3Instance.send(command);
-  // return new Promise((resolve, reject) => {
-  //   s3Instance.deleteObject(
-  //     {
-  //       Bucket: bucket,
-  //       Key: key
-  //     },
-  //     (err, data) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         resolve(data);
-  //       }
-  //     }
-  //   );
-  // });
 };
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/PutObjectCommand/
@@ -130,7 +74,6 @@ export const uploadMedia = async (
   contentType?: 'image/jpeg' | 'image/jpg' | 'image/png' | 'application/pdf',
   contentEncoding?: string,
 ): Promise<any> => {
-  console.log('uploadMediafileName', fileName);
   const input: PutObjectCommandInput = {
     Body: body,
     Bucket: bucketName,
@@ -165,31 +108,10 @@ export const fetchSignedUrl = async (
       expiresIn: 3600,
     });
 
-    console.log('signedUrl', signedUrl)
-
     return signedUrl;
   } catch (err) {
     console.log('fetchSignedUrl', fetchSignedUrl);
   }
-
-  //   const url = await new Promise((resolve, reject) => {
-  //     s3Instance.getSignedUrl(
-  //       'getObject',
-  //       {
-  //         Bucket: bucketName,
-  //         Key: keyName
-  //       },
-  //       (err, url) => {
-  //         if (err) {
-  //           reject(err);
-  //         } else {
-  //           resolve(url);
-  //         }
-  //       }
-  //     );
-  //   });
-
-  //   return url;
 };
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/CopyObjectCommand/
@@ -210,6 +132,7 @@ export const copyObject = async (
     CopySource: '/sourcebucket/HappyFacejpg',
     Key: 'HappyFaceCopyjpg',
   };
+
   const command = new CopyObjectCommand(input);
   const response = await s3Instance.send(command);
   // const options: any = {};
@@ -253,24 +176,26 @@ export const createS3Instance = async (): Promise<S3Client> => {
 export const fetchObjectsByKey = async (
   bucketName: string,
   listContents: any[],
-  s3Instance: S3Client
+  s3Instance: S3Client,
 ): Promise<any> => {
   const promises = [];
 
-  for (let i = 0; i < listContents.length; i++) {
-    const key = listContents[i].Key;
+  if (listContents) {
+    for (let i = 0; i < listContents.length; i++) {
+      const key = listContents[i].Key;
 
-    promises.push(await fetchSignedUrl(bucketName, key, s3Instance))
+      promises.push(await fetchSignedUrl(bucketName, key, s3Instance));
+    }
   }
 
   const images = await Promise.all(promises);
 
   return images;
-}
+};
 
 export const generateKey = (userId: string, fileName: string) => {
   const timestamp = Date.now();
-  const extension = fileName.split('.').pop(); // Get file extension
+  const extension = fileName.split('.').pop();
+
   return `${userId}/images/${timestamp}.${extension}`;
 };
-

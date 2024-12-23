@@ -16,17 +16,17 @@ const Images = async () => {
     method: 'GET',
     headers: {
       User: `${userId}`,
-    }
+    },
   });
 
-  const { data } = await imagesRes.json()
+  const { data } = await imagesRes.json();
 
   return (
     <div className="flex flex-wrap">
-      {[...data, ...data].map((image, index) => (
+      {data.map((image: any, index: number) => (
         <div key={`${image.id}${index}`} className="flex w-48 flex-col p-4">
-          <img src={image} className="h-28 w-28" alt="image" />
-          <div>{image.name}</div>
+          <img src={image} className="h-32 w-32" alt="image" />
+          {/* <div>{image.name}</div> */}
         </div>
       ))}
     </div>

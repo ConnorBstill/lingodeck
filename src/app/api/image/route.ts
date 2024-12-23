@@ -19,10 +19,14 @@ export const GET = async (request: NextRequest) => {
   const response = await fetchBucketObjectsByPrefix(
     process.env.AWS_BUCKET_NAME!,
     `${userId}/images`,
-    s3
+    s3,
   );
 
-  const images = await fetchObjectsByKey(process.env.AWS_BUCKET_NAME!, response.Contents, s3);
+  const images = await fetchObjectsByKey(
+    process.env.AWS_BUCKET_NAME!,
+    response.Contents,
+    s3,
+  );
 
   return new NextResponse(JSON.stringify({ data: images }), {
     status: 200,

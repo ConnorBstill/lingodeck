@@ -2,8 +2,11 @@
 
 import { ChangeEvent } from 'react';
 import { SignedOut, SignInButton, UserButton, SignedIn } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 export const TopNav = () => {
+  const router = useRouter();
+
   const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
@@ -20,6 +23,8 @@ export const TopNav = () => {
         fileBuffer: buffer,
       }),
     });
+
+    router.refresh();
   };
 
   const readFileAsBuffer = (file: File): Promise<Buffer> => {
