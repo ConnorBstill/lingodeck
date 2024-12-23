@@ -3,7 +3,7 @@
  * for Docker builds.
  */
 import './src/env.js';
-import { withSentryConfig } from '@sentry/nextjs';;
+import { withSentryConfig } from '@sentry/nextjs';
 
 /** @type {import("next").NextConfig} */
 const coreConfig = {
@@ -20,9 +20,7 @@ const coreConfig = {
 
 // TODO: Possibly enable error video replays and route tunneling to avoid ad blockers
 
-const config = withSentryConfig(
-  coreConfig, 
-  {
+const config = withSentryConfig(coreConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 

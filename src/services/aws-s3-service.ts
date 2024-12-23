@@ -163,6 +163,22 @@ export const copyObject = async (
   // });
 };
 
+export const deleteBucketObject = async (
+  bucketName: string,
+  keyName: string,
+  s3Instance: S3Client,
+): Promise<any> => {
+  const input = {
+    Bucket: bucketName,
+    Key: keyName,
+  };
+
+  const command = new DeleteObjectCommand(input);
+  const response = await s3Instance.send(command);
+
+  return response;
+};
+
 export const createS3Instance = async (): Promise<S3Client> => {
   return new S3Client({
     credentials: {
