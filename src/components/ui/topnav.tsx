@@ -54,7 +54,7 @@ export const TopNav = () => {
 
   return (
     <nav className="mb-3 flex w-full items-center justify-between border-b p-4 text-xl font-semibold">
-      <div>Gallery</div>
+      <div>Lingodeck</div>
 
       <div>
         <SignedOut>
@@ -62,12 +62,12 @@ export const TopNav = () => {
         </SignedOut>
 
         <SignedIn>
-          <input
+          {/* <input
             onChange={uploadImage}
             type="file"
             accept="image/png, image/jpeg"
-          />
-          <UserButton />
+          /> */}
+          {/* <UserButton /> */}
         </SignedIn>
       </div>
     </nav>

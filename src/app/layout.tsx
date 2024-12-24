@@ -8,11 +8,13 @@ import {
   UserButton,
 } from '@clerk/nextjs';
 import { Toaster } from '~/components/ui/sonner';
+import { TopNav } from '../components/ui/topnav';
 
-import { GeistSans } from 'geist/font/sans';
+import { ThemeProvider } from '../components/theme-provider';
+
+import { GeistMono } from 'geist/font/mono';
 import { type Metadata } from 'next';
 
-import { TopNav } from './_components/topnav';
 
 export const metadata: Metadata = {
   title: 'Lingodeck',
@@ -25,11 +27,18 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable}`}>
+      <html className={`${GeistMono.variable}`} lang="en" suppressHydrationWarning>
         <body>
-          <TopNav />
-          {children}
-          <Toaster />
+          <ThemeProvider
+            attribute="class"
+            // defaultTheme="system"
+            // enableSystem
+            disableTransitionOnChange
+          >
+            <TopNav />
+            {children}
+            <Toaster />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

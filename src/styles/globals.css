@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* body {
   @apply bg-black text-white
-}
+} */
+
 
 
 @layer base {
@@ -66,6 +67,10 @@ body {
 
 @layer base {
   * {
-    @apply border-border;}
+    @apply border-border;
+  }
   body {
-    @apply bg-background text-foreground;}}
+    @apply bg-background text-foreground;
+    /* @apply font-barlow; */
+  }
+}
