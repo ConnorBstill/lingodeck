@@ -1,6 +1,3 @@
-'use client'
-
-import { useState, useRef } from 'react'
 // import { auth, currentUser } from '@clerk/nextjs/server';
 
 // import { SignedOut, SignedIn } from '@clerk/nextjs';
@@ -48,15 +45,6 @@ export const dynamic = 'force-dynamic';
 // };
 
 export default function HomePage() {
-  const wordInputRef = useRef<HTMLInputElement>(null);
-
-  const getRelatedWords = async () => {
-    const searchTerm = wordInputRef.current?.value
-    if (searchTerm) {
-      const response = await fetch(`api/related-words?word=${encodeURIComponent(searchTerm)}`);
-    }
-  }
-
   return (
     <main className="">
       {/* <SignedOut>
@@ -69,11 +57,9 @@ export default function HomePage() {
       </SignedIn> */}
 
       <section className="container mx-auto">
-        <h1 className="text-3xl lg:text-5xl">Easily generate flashcard decks</h1>
-
-        <Input type="text" ref={wordInputRef} />
-
-        <Button onClick={getRelatedWords}>Get words</Button>
+        <h1 className="text-3xl lg:text-5xl">
+          Easily generate flashcard decks
+        </h1>
       </section>
     </main>
   );

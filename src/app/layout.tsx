@@ -1,19 +1,18 @@
 import '~/styles/globals.css';
 
 import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
+  ClerkProvider
 } from '@clerk/nextjs';
 import { Toaster } from '~/components/ui/sonner';
-import { TopNav } from '../components/ui/topnav';
+import { NavMenu } from '~/components/ui/navigation-menu';
+import { Moon, MoonIcon, Sun, EllipsisVertical } from "lucide-react"
+import Link from 'next/link';
 
 import { ThemeProvider } from '../components/theme-provider';
 
-import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
+import { Button } from '~/components/ui/button';
 
 
 export const metadata: Metadata = {
@@ -25,9 +24,10 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+
   return (
     <ClerkProvider>
-      <html className={`${GeistMono.variable}`} lang="en" suppressHydrationWarning>
+      <html className={`${GeistSans.variable}`} lang="en" suppressHydrationWarning>
         <body>
           <ThemeProvider
             attribute="class"
@@ -35,7 +35,7 @@ export default function RootLayout({
             // enableSystem
             disableTransitionOnChange
           >
-            <TopNav />
+            <NavMenu />
             {children}
             <Toaster />
           </ThemeProvider>
