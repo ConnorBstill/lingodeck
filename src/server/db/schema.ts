@@ -35,3 +35,15 @@ export const images = createTable(
     nameIndex: index('name_idx').on(example.name),
   }),
 );
+
+export const languages = createTable(
+  'languages',
+  {
+    id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
+    name: varchar('name', { length: 20 }).unique().notNull(),
+    isoCode: varchar('iso_code', { length: 10 }).unique().notNull(),
+  },
+  (example) => ({
+    nameIndex: index('name_idx').on(example.name),
+  }),
+);

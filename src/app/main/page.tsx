@@ -1,34 +1,17 @@
-'use client'
-
-import { useState, useRef } from 'react'
-// import { auth, currentUser } from '@clerk/nextjs/server';
-
-// import { SignedOut, SignedIn } from '@clerk/nextjs';
-import Image from 'next/image';
-import { Input } from './../../components/ui/input';
-import { Button } from './../../components/ui/button';
-import Link from 'next/link';
 import { db } from '~/server/db';
 
-export const dynamic = 'force-dynamic';
+import { WordGenerator } from '~/components/client/WordGenerator';
 
-export default function HomePage() {
-  const wordInputRef = useRef<HTMLInputElement>(null);
+const getLanguages = async () => {
+  const langs = await db.query.languages.findMany({
+    orderBy: (model, { asc }) => asc(model.name),
+  });
 
-  const getRelatedWords = async () => {
-    const searchTerm = wordInputRef.current?.value
-    if (searchTerm) {
-      const response = await fetch(`api/related-words?word=${encodeURIComponent(searchTerm)}`);
-    }
-  }
+  return langs;
+}
 
-  return (
-    <main className="">
-      <section className="container mx-auto">
-        <Input type="text" ref={wordInputRef} />
-
-        <Button onClick={getRelatedWords}>Get words</Button>
-      </section>
-    </main>
-  );
+export default async function MainPage() {
+  const languages = await getLanguages();
+  console.log('languages server', languages)
+  return <WordGenerator languages={languages} />;
 }

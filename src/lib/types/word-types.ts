@@ -4,3 +4,9 @@ export interface WordObject {
   tags: 'syn' | 'prop' | 'n' | 'v'
   score?: number;
 }
+
+export interface Language {
+  id: number;
+  name: string;
+  isoCode: string;
+}

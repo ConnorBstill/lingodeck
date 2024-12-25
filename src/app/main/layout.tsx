@@ -8,7 +8,7 @@ import { NavMenu } from '~/components/ui/navigation-menu';
 import { Moon, MoonIcon, Sun, EllipsisVertical } from "lucide-react"
 import Link from 'next/link';
 
-import { ThemeProvider } from '../components/theme-provider';
+import { ThemeProvider } from '../../components/theme-provider';
 
 import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
@@ -21,26 +21,13 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/favicon.ico' }],
 };
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
 
   return (
-    <ClerkProvider>
-      <html className={`${GeistSans.variable} h-full`} lang="en" suppressHydrationWarning>
-        <body className="h-full">
-          <ThemeProvider
-            attribute="class"
-            // defaultTheme="system"
-            // enableSystem
-            disableTransitionOnChange
-          >
-            <NavMenu />
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <main className="flex h-full justify-center items-center p-5">
+      {children}
+    </main>
   );
 }
