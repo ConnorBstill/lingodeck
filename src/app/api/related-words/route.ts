@@ -10,25 +10,34 @@ import { ResponseBuilder } from '../../../lib/response-builder';
 export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
     const word = req.nextUrl.searchParams.get('word');
-  
-    const relatedWordsRes = await fetch(`${process.env.DATAMUSE_API_URL}/words?ml=${word}`);
+    const languageCode = req.nextUrl.searchParams.get('lang');
+
+    const relatedWordsRes = await fetch(
+      `${process.env.DATAMUSE_API_URL}/words?ml=${word}`,
+    );
     const relatedWords = await relatedWordsRes.json();
-  
-    const bareWordList: string[] = []
-  
-    const relatedWithoutPropNouns = relatedWords.filter((word: WordObject) => {
+
+    const bareWordList: string[] = [];
+
+    const words = relatedWords.filter((word: WordObject) => {
       if (word.tags && !word.tags.includes('prop')) {
         bareWordList.push(word.word);
         return true;
       }
-    })
-  
-    const translate = new Translate({ key: process.env.GOOGLE_API_KEY, projectId: process.env.GOOGLE_PROJECT_ID });
-    const [translations] = await translate.translate(bareWordList, 'fr')
-    
-    return new NextResponse(ResponseBuilder({ relatedWithoutPropNouns, translations }));
-  } catch(err) {
+    });
+
+    const translate = new Translate({
+      key: process.env.GOOGLE_API_KEY,
+      projectId: process.env.GOOGLE_PROJECT_ID,
+    });
+    const [translations] = await translate.translate(
+      bareWordList,
+      languageCode,
+    );
+
+    return new NextResponse(ResponseBuilder({ words, translations }));
+  } catch (err) {
     console.error('error in api/related-words', err);
     return new NextResponse(ResponseBuilder(null));
   }
-}
+};

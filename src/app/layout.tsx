@@ -1,11 +1,9 @@
 import '~/styles/globals.css';
 
-import {
-  ClerkProvider
-} from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from '~/components/ui/sonner';
 import { NavMenu } from '~/components/ui/navigation-menu';
-import { Moon, MoonIcon, Sun, EllipsisVertical } from "lucide-react"
+import { Moon, MoonIcon, Sun, EllipsisVertical } from 'lucide-react';
 import Link from 'next/link';
 
 import { ThemeProvider } from '../components/theme-provider';
@@ -13,7 +11,6 @@ import { ThemeProvider } from '../components/theme-provider';
 import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
 import { Button } from '~/components/ui/button';
-
 
 export const metadata: Metadata = {
   title: 'Lingodeck',
@@ -24,10 +21,13 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-
   return (
     <ClerkProvider>
-      <html className={`${GeistSans.variable} h-full`} lang="en" suppressHydrationWarning>
+      <html
+        className={`${GeistSans.variable} h-full`}
+        lang="en"
+        suppressHydrationWarning
+      >
         <body className="h-full">
           <ThemeProvider
             attribute="class"

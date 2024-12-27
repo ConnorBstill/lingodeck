@@ -8,10 +8,10 @@ const getLanguages = async () => {
   });
 
   return langs;
-}
+};
 
 export default async function MainPage() {
   const languages = await getLanguages();
-  console.log('languages server', languages)
+
   return <WordGenerator languages={languages} />;
 }

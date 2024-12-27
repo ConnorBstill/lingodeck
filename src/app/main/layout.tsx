@@ -1,19 +1,6 @@
 import '~/styles/globals.css';
 
-import {
-  ClerkProvider
-} from '@clerk/nextjs';
-import { Toaster } from '~/components/ui/sonner';
-import { NavMenu } from '~/components/ui/navigation-menu';
-import { Moon, MoonIcon, Sun, EllipsisVertical } from "lucide-react"
-import Link from 'next/link';
-
-import { ThemeProvider } from '../../components/theme-provider';
-
-import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
-import { Button } from '~/components/ui/button';
-
 
 export const metadata: Metadata = {
   title: 'Lingodeck',
@@ -24,9 +11,8 @@ export const metadata: Metadata = {
 export default function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-
   return (
-    <main className="flex h-full justify-center items-center p-5">
+    <main className="flex h-full justify-center items-start p-5">
       {children}
     </main>
   );

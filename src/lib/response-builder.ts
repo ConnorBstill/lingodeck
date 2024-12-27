@@ -30,7 +30,7 @@ export const ResponseBuilder = (
   data: any,
   msg: string = null,
   err: boolean = false,
-  builderOptions?: MainResponseBuilderOptions
+  builderOptions?: MainResponseBuilderOptions,
 ): Response | any => {
   const options = new ResponseBuilderOptions(builderOptions);
 
@@ -47,7 +47,7 @@ export const ResponseBuilder = (
   return JSON.stringify({
     data,
     msg,
-    err
+    err,
   });
 };
 

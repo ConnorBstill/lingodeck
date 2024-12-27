@@ -16,7 +16,7 @@ export const TopNav = () => {
 
     toast('Uploading...', {
       duration: 7000,
-      id: 'image-upload-begin'
+      id: 'image-upload-begin',
     });
 
     const response = await fetch('api/image', {
@@ -32,7 +32,7 @@ export const TopNav = () => {
     });
 
     toast.dismiss('image-upload-begin');
-    toast('Upload complete!', { duration: 2000 })
+    toast('Upload complete!', { duration: 2000 });
 
     router.refresh();
   };
