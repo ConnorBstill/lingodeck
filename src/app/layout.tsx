@@ -23,11 +23,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
-      <html
-        className={`${GeistSans.variable} h-full`}
-        lang="en"
-        suppressHydrationWarning
-      >
+      <html className={`${GeistSans.variable} h-full`} lang="en" suppressHydrationWarning>
         <body className="h-full">
           <ThemeProvider
             attribute="class"

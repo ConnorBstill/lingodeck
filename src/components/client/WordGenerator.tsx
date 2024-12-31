@@ -4,7 +4,6 @@ import { useState, useRef } from 'react';
 // import { auth, currentUser } from '@clerk/nextjs/server';
 
 // import { SignedOut, SignedIn } from '@clerk/nextjs';
-import { Language } from '~/lib/types/word-types';
 import { Input } from '../ui/input';
 import {
   Select,
@@ -24,21 +23,26 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
+import { toast } from 'sonner';
 
-import { WordObject, WordListTranslationData } from '~/lib/types/word-types';
+import { handleError } from '~/lib/utils';
+import { WordObject, WordListTranslationData, Language } from '~/lib/types/word-types';
 
 interface WordGeneratorProps {
   languages: Language[];
 }
 
+const initialTableData: WordListTranslationData = {
+  words: [],
+  translations: [],
+};
+
 const WordGenerator = (props: WordGeneratorProps) => {
   const wordInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
-  const [wordTableData, setWordTableData] = useState<WordListTranslationData>({
-    words: [],
-    translations: [],
-  });
+  const [wordTableData, setWordTableData] =
+    useState<WordListTranslationData>(initialTableData);
 
   const renderLanguageList = () => {
     const { languages } = props;
@@ -57,34 +61,40 @@ const WordGenerator = (props: WordGeneratorProps) => {
   const getRelatedWords = async () => {
     const searchTerm = wordInputRef.current?.value;
 
-    if (searchTerm) {
-      const response = await fetch(
-        `api/related-words?word=${encodeURIComponent(searchTerm)}&lang=${selectedLanguage}`,
-      );
+    if (searchTerm && selectedLanguage) {
+      try {
+        const response = await fetch(
+          `api/related-words?word=${encodeURIComponent(searchTerm)}&lang=${selectedLanguage}`,
+        );
+        const { data } = await response.json();
 
-      const { data } = await response.json();
-      setWordTableData(data);
+        setWordTableData(data);
+      } catch (err) {
+        handleError('Error fetching word list', err);
+      }
+    } else {
+      toast('Please give the category and language that you want to create a list with');
     }
   };
 
   const renderWordList = () => {
-    return wordTableData.words.map((item: WordObject, i: number) => (
-      <TableRow key={`${i}${item.word}`}>
-        <TableCell>{item.word}</TableCell>
-        <TableCell>{wordTableData.translations[i]}</TableCell>
-      </TableRow>
-    ));
+    return wordTableData.words.map((item: WordObject, i: number) => {
+      const translation = wordTableData.translations[i];
+      const { word } = item;
+
+      return (
+        <TableRow key={`${word}${translation}`}>
+          <TableCell>{word}</TableCell>
+          <TableCell>{translation}</TableCell>
+        </TableRow>
+      );
+    });
   };
 
   return (
     <div className="flex flex-col justify-start items-center h-full w-full">
       <div className="flex justify-around w-1/2 mb-10">
-        <Input
-          placeholder="Category"
-          type="text"
-          ref={wordInputRef}
-          className="w-1/3"
-        />
+        <Input placeholder="Category" type="text" ref={wordInputRef} className="w-1/3" />
 
         <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
           <SelectTrigger className="w-1/3">
@@ -104,6 +114,7 @@ const WordGenerator = (props: WordGeneratorProps) => {
         </Button>
       </div>
 
+      {/* List of words and translations */}
       <div className="w-1/2">
         <Table>
           <TableHeader>

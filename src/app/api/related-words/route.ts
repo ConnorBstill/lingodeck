@@ -30,10 +30,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       key: process.env.GOOGLE_API_KEY,
       projectId: process.env.GOOGLE_PROJECT_ID,
     });
-    const [translations] = await translate.translate(
-      bareWordList,
-      languageCode,
-    );
+    const [translations] = await translate.translate(bareWordList, languageCode);
 
     return new NextResponse(ResponseBuilder({ words, translations }));
   } catch (err) {

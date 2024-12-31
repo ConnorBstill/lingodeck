@@ -57,9 +57,7 @@ export default function HomePage() {
       </SignedIn> */}
 
       <section className="container mx-auto">
-        <h1 className="text-3xl lg:text-5xl">
-          Easily generate flashcard decks
-        </h1>
+        <h1 className="text-3xl lg:text-5xl">Easily generate flashcard decks</h1>
       </section>
     </main>
   );
