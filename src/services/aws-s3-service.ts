@@ -56,12 +56,18 @@ export const deleteBucketObjectByKey = async (
   s3Instance: S3Client,
 ): Promise<any> => {
   const input = {
-    Bucket: 'examplebucket',
-    Key: 'objectkey.jpg',
+    Bucket: bucket,
+    Key: key,
   };
 
-  const command = new DeleteObjectCommand(input);
-  const response = await s3Instance.send(command);
+  try {
+    const command = new DeleteObjectCommand(input);
+    const response = await s3Instance.send(command);
+
+    return response;
+  } catch (err) {
+    console.error('Error in deleteBucketObjectByKey', err);
+  }
 };
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/PutObjectCommand/
@@ -86,10 +92,14 @@ export const uploadMedia = async (
     },
   };
 
-  const command = new PutObjectCommand(input);
-  const response = await s3Instance.send(command);
+  try {
+    const command = new PutObjectCommand(input);
+    const response = await s3Instance.send(command);
 
-  return response;
+    return response;
+  } catch (err) {
+    console.error('Error in uploadMedia', err);
+  }
 };
 
 export const fetchSignedUrl = async (
@@ -110,7 +120,7 @@ export const fetchSignedUrl = async (
 
     return signedUrl;
   } catch (err) {
-    console.log('fetchSignedUrl', fetchSignedUrl);
+    console.log('Error in fetchSignedUrl', err);
   }
 };
 
@@ -173,20 +183,28 @@ export const deleteBucketObject = async (
     Key: keyName,
   };
 
-  const command = new DeleteObjectCommand(input);
-  const response = await s3Instance.send(command);
+  try {
+    const command = new DeleteObjectCommand(input);
+    const response = await s3Instance.send(command);
 
-  return response;
+    return response;
+  } catch (err) {
+    console.error('Error in deleteBucketObject', err);
+  }
 };
 
 export const createS3Instance = async (): Promise<S3Client> => {
-  return new S3Client({
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
-    },
-    region: process.env.AWS_S3_REGION,
-  });
+  try {
+    return new S3Client({
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+      },
+      region: process.env.AWS_S3_REGION,
+    });
+  } catch (err) {
+    console.warn('Error in createS3Instance', err);
+  }
 };
 
 export const fetchObjectsByKey = async (
@@ -196,17 +214,21 @@ export const fetchObjectsByKey = async (
 ): Promise<any> => {
   const promises = [];
 
-  if (listContents) {
-    for (let i = 0; i < listContents.length; i++) {
-      const key = listContents[i].Key;
+  try {
+    if (listContents) {
+      for (let i = 0; i < listContents.length; i++) {
+        const key = listContents[i].Key;
 
-      promises.push(await fetchSignedUrl(bucketName, key, s3Instance));
+        promises.push(await fetchSignedUrl(bucketName, key, s3Instance));
+      }
     }
+
+    const images = await Promise.all(promises);
+
+    return images;
+  } catch (err) {
+    console.error('Error in fetchObjectsByKey', err);
   }
-
-  const images = await Promise.all(promises);
-
-  return images;
 };
 
 export const generateKey = (userId: string, fileName: string) => {
