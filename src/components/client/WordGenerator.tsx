@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
+import { LoadingSpinner } from '../ui/loading-spinner';
 import { toast } from 'sonner';
 
 import { handleError } from '~/lib/utils';
@@ -62,6 +63,8 @@ const WordGenerator = (props: WordGeneratorProps) => {
     const searchTerm = wordInputRef.current?.value;
 
     if (searchTerm && selectedLanguage) {
+      setWordTableData(initialTableData);
+
       try {
         const response = await fetch(
           `api/related-words?word=${encodeURIComponent(searchTerm)}&lang=${selectedLanguage}`,
@@ -78,17 +81,28 @@ const WordGenerator = (props: WordGeneratorProps) => {
   };
 
   const renderWordList = () => {
-    return wordTableData.words.map((item: WordObject, i: number) => {
-      const translation = wordTableData.translations[i];
-      const { word } = item;
+    const { words, translations } = wordTableData;
 
+    if (words.length) {
       return (
-        <TableRow key={`${word}${translation}`}>
-          <TableCell>{word}</TableCell>
-          <TableCell>{translation}</TableCell>
-        </TableRow>
+        <TableBody>
+          {words.map((item: WordObject, i: number) => {
+            const translation = translations[i];
+            const { word } = item;
+
+            return (
+              <TableRow key={`${word}${translation}`}>
+                <TableCell>{word}</TableCell>
+                <TableCell>{translation}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
       );
-    });
+    } else {
+      // return <LoadingSpinner />
+      return <span>Loading...</span>;
+    }
   };
 
   return (
@@ -124,7 +138,7 @@ const WordGenerator = (props: WordGeneratorProps) => {
             </TableRow>
           </TableHeader>
 
-          <TableBody>{renderWordList()}</TableBody>
+          {renderWordList()}
         </Table>
       </div>
     </div>
