@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 // import { auth, currentUser } from '@clerk/nextjs/server';
 
 // import { SignedOut, SignedIn } from '@clerk/nextjs';
-import { Input } from '../ui/input';
 import {
   Select,
   SelectContent,
@@ -25,29 +25,38 @@ import {
 } from '../ui/table';
 import { LoadingSpinner } from '../ui/loading-spinner';
 import { toast } from 'sonner';
+import { Input } from '../ui/input';
 
 import { handleError } from '~/lib/utils';
-import { WordObject, WordListTranslationData, Language } from '~/lib/types/word-types';
+import { WordObject, WordListTranslationObject, Language } from '~/lib/types/word-types';
+
+import { getRelatedWords } from '~/server/languages-service/words';
 
 interface WordGeneratorProps {
   languages: Language[];
 }
 
-const initialTableData: WordListTranslationData = {
-  words: [],
-  translations: [],
-};
-
-const WordGenerator = (props: WordGeneratorProps) => {
+const WordGenerator = () => {
   const wordInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
-  const [wordTableData, setWordTableData] =
-    useState<WordListTranslationData>(initialTableData);
+  // const [wordTableData, setWordTableData] =
+  // useState<WordListTranslationData>(initialTableData);
+
+  const { data: languages } = useQuery<Language[]>({ queryKey: ['languages'] });
+
+  const {
+    data: wordList,
+    refetch: fetchWordList,
+    isRefetching: wordListLoading,
+  } = useQuery<WordListTranslationObject[]>({
+    queryKey: ['word-list'],
+    queryFn: () => getRelatedWords(wordInputRef.current.value, selectedLanguage),
+    enabled: false,
+    placeholderData: [],
+  });
 
   const renderLanguageList = () => {
-    const { languages } = props;
-
     return languages.map((language: Language) => {
       const { id, name, isoCode } = language;
 
@@ -59,49 +68,20 @@ const WordGenerator = (props: WordGeneratorProps) => {
     });
   };
 
-  const getRelatedWords = async () => {
-    const searchTerm = wordInputRef.current?.value;
-
-    if (searchTerm && selectedLanguage) {
-      setWordTableData(initialTableData);
-
-      try {
-        const response = await fetch(
-          `api/related-words?word=${encodeURIComponent(searchTerm)}&lang=${selectedLanguage}`,
-        );
-        const { data } = await response.json();
-
-        setWordTableData(data);
-      } catch (err) {
-        handleError('Error fetching word list', err);
-      }
-    } else {
-      toast('Please give the category and language that you want to create a list with');
-    }
-  };
-
-  const renderWordList = () => {
-    const { words, translations } = wordTableData;
-
-    if (words.length) {
-      return (
-        <TableBody>
-          {words.map((item: WordObject, i: number) => {
-            const translation = translations[i];
-            const { word } = item;
-
-            return (
-              <TableRow key={`${word}${translation}`}>
-                <TableCell>{word}</TableCell>
-                <TableCell>{translation}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
+  const renderWordList = (): any[] => {
+    if (wordList.length) {
+      return wordList.map(
+        ({ word, translation }: WordListTranslationObject, i: number) => {
+          return (
+            <TableRow key={`${word.word}${translation}`}>
+              <TableCell>{word.word}</TableCell>
+              <TableCell>{translation}</TableCell>
+            </TableRow>
+          );
+        },
       );
     } else {
-      // return <LoadingSpinner />
-      return <span>Loading...</span>;
+      return [];
     }
   };
 
@@ -123,12 +103,15 @@ const WordGenerator = (props: WordGeneratorProps) => {
           </SelectContent>
         </Select>
 
-        <Button onClick={getRelatedWords} className="w-1/4">
-          Get words
+        <Button
+          onClick={() => fetchWordList()}
+          disabled={wordListLoading}
+          className="w-1/4"
+        >
+          {wordListLoading ? <LoadingSpinner /> : 'Generate list'}
         </Button>
       </div>
 
-      {/* List of words and translations */}
       <div className="w-1/2">
         <Table>
           <TableHeader>
@@ -137,8 +120,7 @@ const WordGenerator = (props: WordGeneratorProps) => {
               <TableHead>Translation</TableHead>
             </TableRow>
           </TableHeader>
-
-          {renderWordList()}
+          <TableBody>{renderWordList()}</TableBody>
         </Table>
       </div>
     </div>

@@ -30,9 +30,14 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       key: process.env.GOOGLE_API_KEY,
       projectId: process.env.GOOGLE_PROJECT_ID,
     });
+
     const [translations] = await translate.translate(bareWordList, languageCode);
 
-    return new NextResponse(ResponseBuilder({ words, translations }));
+    const wordList = words.map((word: string, index: number) => {
+      return { word, translation: translations[index] };
+    });
+
+    return new NextResponse(ResponseBuilder(wordList));
   } catch (err) {
     console.error('error in api/related-words', err);
     return new NextResponse(ResponseBuilder(null));

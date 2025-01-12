@@ -1,17 +1,20 @@
-import { db } from '~/server/db';
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+
+import { getLanguagesServer } from '../../server/languages-service/languages';
 
 import { WordGenerator } from '~/components/client/WordGenerator';
 
-const getLanguages = async () => {
-  const langs = await db.query.languages.findMany({
-    orderBy: (model, { asc }) => asc(model.name),
+export default async function MainPage() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['languages'],
+    queryFn: getLanguagesServer,
   });
 
-  return langs;
-};
-
-export default async function MainPage() {
-  const languages = await getLanguages();
-
-  return <WordGenerator languages={languages} />;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <WordGenerator />
+    </HydrationBoundary>
+  );
 }

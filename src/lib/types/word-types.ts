@@ -5,9 +5,9 @@ export interface WordObject {
   score?: number;
 }
 
-export interface WordListTranslationData {
-  words: WordObject[];
-  translations: string[];
+export interface WordListTranslationObject {
+  word: WordObject;
+  translation: string;
 }
 
 export interface Language {

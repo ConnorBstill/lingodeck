@@ -20,14 +20,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <QueryProviders>
-      <ClerkProvider>
-        <html
-          className={`${GeistSans.variable} h-full`}
-          lang="en"
-          suppressHydrationWarning
-        >
-          <body className="h-full">
+    <html className={`${GeistSans.variable} h-full`} lang="en" suppressHydrationWarning>
+      <body className="h-full">
+        <QueryProviders>
+          <ClerkProvider>
             <ThemeProvider
               attribute="class"
               // defaultTheme="system"
@@ -38,9 +34,9 @@ export default function RootLayout({
               {children}
               <Toaster />
             </ThemeProvider>
-          </body>
-        </html>
-      </ClerkProvider>
-    </QueryProviders>
+          </ClerkProvider>
+        </QueryProviders>
+      </body>
+    </html>
   );
 }
