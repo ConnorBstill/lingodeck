@@ -6,7 +6,8 @@ export interface WordObject {
 }
 
 export interface WordListTranslationObject {
-  word: WordObject;
+  id: number;
+  word: string;
   translation: string;
 }
 

@@ -40,10 +40,10 @@ const WordGenerator = () => {
   const wordInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
-  // const [wordTableData, setWordTableData] =
-  // useState<WordListTranslationData>(initialTableData);
 
-  const { data: languages } = useQuery<Language[]>({ queryKey: ['languages'] });
+  const { data: languageOptions } = useQuery<Language[]>({
+    queryKey: ['language-options'],
+  });
 
   const {
     data: wordList,
@@ -51,13 +51,14 @@ const WordGenerator = () => {
     isRefetching: wordListLoading,
   } = useQuery<WordListTranslationObject[]>({
     queryKey: ['word-list'],
-    queryFn: () => getRelatedWords(wordInputRef.current.value, selectedLanguage),
+    queryFn: () =>
+      getRelatedWords(encodeURIComponent(wordInputRef.current.value), selectedLanguage),
     enabled: false,
     placeholderData: [],
   });
 
-  const renderLanguageList = () => {
-    return languages.map((language: Language) => {
+  const renderLanguageOptionsList = () => {
+    return languageOptions.map((language: Language) => {
       const { id, name, isoCode } = language;
 
       return (
@@ -70,16 +71,14 @@ const WordGenerator = () => {
 
   const renderWordList = (): any[] => {
     if (wordList.length) {
-      return wordList.map(
-        ({ word, translation }: WordListTranslationObject, i: number) => {
-          return (
-            <TableRow key={`${word.word}${translation}`}>
-              <TableCell>{word.word}</TableCell>
-              <TableCell>{translation}</TableCell>
-            </TableRow>
-          );
-        },
-      );
+      return wordList.map(({ id, word, translation }: WordListTranslationObject) => {
+        return (
+          <TableRow key={`${id}${word}`}>
+            <TableCell>{word}</TableCell>
+            <TableCell>{translation}</TableCell>
+          </TableRow>
+        );
+      });
     } else {
       return [];
     }
@@ -98,7 +97,7 @@ const WordGenerator = () => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Languages</SelectLabel>
-              {renderLanguageList()}
+              {renderLanguageOptionsList()}
             </SelectGroup>
           </SelectContent>
         </Select>

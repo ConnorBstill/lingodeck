@@ -1,6 +1,6 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 
-import { getLanguagesServer } from '../../server/languages-service/languages';
+import { getLanguageOptionsServer } from '../../server/languages-service/languages';
 
 import { WordGenerator } from '~/components/client/WordGenerator';
 
@@ -8,8 +8,8 @@ export default async function MainPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['languages'],
-    queryFn: getLanguagesServer,
+    queryKey: ['language-options'],
+    queryFn: getLanguageOptionsServer,
   });
 
   return (
