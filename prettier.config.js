@@ -1,7 +1,7 @@
 /** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
 const config = {
   arrowParens: 'always',
-  printWidth: 90,
+  printWidth: 78,
   singleQuote: true,
   jsxSingleQuote: false,
   semi: true,

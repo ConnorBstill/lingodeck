@@ -20,7 +20,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html className={`${GeistSans.variable} h-full`} lang="en" suppressHydrationWarning>
+    <html
+      className={`${GeistSans.variable} h-full`}
+      lang="en"
+      suppressHydrationWarning
+    >
       <body className="h-full">
         <QueryProviders>
           <ClerkProvider>

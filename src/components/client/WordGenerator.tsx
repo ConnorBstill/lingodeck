@@ -28,7 +28,11 @@ import { toast } from 'sonner';
 import { Input } from '../ui/input';
 
 import { handleError } from '~/lib/utils';
-import { WordObject, WordListTranslationObject, Language } from '~/lib/types/word-types';
+import {
+  WordObject,
+  WordListTranslationObject,
+  Language,
+} from '~/lib/types/word-types';
 
 import { getRelatedWords } from '~/server/languages-service/words';
 
@@ -52,7 +56,10 @@ const WordGenerator = () => {
   } = useQuery<WordListTranslationObject[]>({
     queryKey: ['word-list'],
     queryFn: () =>
-      getRelatedWords(encodeURIComponent(wordInputRef.current.value), selectedLanguage),
+      getRelatedWords(
+        encodeURIComponent(wordInputRef.current.value),
+        selectedLanguage,
+      ),
     enabled: false,
     placeholderData: [],
   });
@@ -71,14 +78,16 @@ const WordGenerator = () => {
 
   const renderWordList = (): any[] => {
     if (wordList.length) {
-      return wordList.map(({ id, word, translation }: WordListTranslationObject) => {
-        return (
-          <TableRow key={`${id}${word}`}>
-            <TableCell>{word}</TableCell>
-            <TableCell>{translation}</TableCell>
-          </TableRow>
-        );
-      });
+      return wordList.map(
+        ({ id, word, translation }: WordListTranslationObject) => {
+          return (
+            <TableRow key={`${id}${word}`}>
+              <TableCell>{word}</TableCell>
+              <TableCell>{translation}</TableCell>
+            </TableRow>
+          );
+        },
+      );
     } else {
       return [];
     }
@@ -87,7 +96,12 @@ const WordGenerator = () => {
   return (
     <div className="flex flex-col justify-start items-center h-full w-full">
       <div className="flex justify-around w-1/2 mb-10">
-        <Input placeholder="Category" type="text" ref={wordInputRef} className="w-1/3" />
+        <Input
+          placeholder="Category"
+          type="text"
+          ref={wordInputRef}
+          className="w-1/3"
+        />
 
         <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
           <SelectTrigger className="w-1/3">

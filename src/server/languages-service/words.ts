@@ -1,6 +1,9 @@
 import { handleError } from '~/lib/utils';
 
-export const getRelatedWords = async (searchTerm: string, selectedLanguage: string) => {
+export const getRelatedWords = async (
+  searchTerm: string,
+  selectedLanguage: string,
+) => {
   try {
     const response = await fetch(
       `api/related-words?term=${encodeURIComponent(searchTerm)}&lang=${selectedLanguage}`,

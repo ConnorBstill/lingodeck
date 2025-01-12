@@ -55,10 +55,13 @@ export const POST = async (request: NextRequest) => {
     'image/png',
   );
 
-  return new NextResponse(JSON.stringify({ message: 'Data received', data: file }), {
-    status: 200,
-    headers: {
-      'Content-Type': 'multipart/form-data',
+  return new NextResponse(
+    JSON.stringify({ message: 'Data received', data: file }),
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     },
-  });
+  );
 };

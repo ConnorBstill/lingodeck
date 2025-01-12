@@ -14,10 +14,10 @@ export default function HomePage() {
         </h1>
 
         <p className="w-2/3">
-          Welcome to Lingodeck, the ultimate tool for creating personalized vocabulary
-          lists in any language. Whether you're learning a new language, expanding your
-          knowledge, or building resources for your studies, our app makes it simple and
-          fun to grow your word bank.
+          Welcome to Lingodeck, the ultimate tool for creating personalized
+          vocabulary lists in any language. Whether you're learning a new
+          language, expanding your knowledge, or building resources for your
+          studies, our app makes it simple and fun to grow your word bank.
         </p>
       </section>
 
@@ -28,11 +28,14 @@ export default function HomePage() {
 
         <ol className="w-2/3 mb-5">
           <li className="mb-5">
-            <h4 className="text-1xl font-extrabold lg:text-2xl">Pick a category</h4>
+            <h4 className="text-1xl font-extrabold lg:text-2xl">
+              Pick a category
+            </h4>
 
             <p>
-              Enter a subject, theme, or keyword—anything you’re interested in! From
-              animals to technology, art to science, the choice is yours.
+              Enter a subject, theme, or keyword—anything you’re interested
+              in! From animals to technology, art to science, the choice is
+              yours.
             </p>
           </li>
 
@@ -42,17 +45,20 @@ export default function HomePage() {
             </h4>
 
             <p>
-              Instantly get a curated list of words related to your chosen category, along
-              with their translations in your selected language.
+              Instantly get a curated list of words related to your chosen
+              category, along with their translations in your selected
+              language.
             </p>
           </li>
 
           <li className="mb-5">
-            <h4 className="text-1xl font-extrabold lg:text-2xl">Download & Learn</h4>
+            <h4 className="text-1xl font-extrabold lg:text-2xl">
+              Download & Learn
+            </h4>
 
             <p>
-              Export your custom vocabulary list as a file you can easily upload into apps
-              like Anki for flashcard-based learning.
+              Export your custom vocabulary list as a file you can easily
+              upload into apps like Anki for flashcard-based learning.
             </p>
           </li>
         </ol>

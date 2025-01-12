@@ -22,14 +22,20 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     const response = result.response.text();
 
     const relatedWords = JSON.parse(
-      response.substring(response.indexOf('[') - 1, response.indexOf(']') + 1),
+      response.substring(
+        response.indexOf('[') - 1,
+        response.indexOf(']') + 1,
+      ),
     );
 
     const translate = new Translate({
       key: process.env.GOOGLE_API_KEY,
       projectId: process.env.GOOGLE_PROJECT_ID,
     });
-    const [translations] = await translate.translate(relatedWords, languageCode);
+    const [translations] = await translate.translate(
+      relatedWords,
+      languageCode,
+    );
 
     const wordList = relatedWords.map((word: any, index: number) => {
       return {

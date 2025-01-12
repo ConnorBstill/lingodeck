@@ -11,5 +11,9 @@ export const metadata: Metadata = {
 export default function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return <main className="flex h-full justify-center items-start p-5">{children}</main>;
+  return (
+    <main className="flex h-full justify-center items-start p-5">
+      {children}
+    </main>
+  );
 }
