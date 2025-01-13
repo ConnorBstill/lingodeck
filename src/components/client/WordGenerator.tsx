@@ -26,19 +26,12 @@ import {
 import { LoadingSpinner } from '../ui/loading-spinner';
 import { toast } from 'sonner';
 import { Input } from '../ui/input';
+import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
 
-import { handleError } from '~/lib/utils';
-import {
-  WordObject,
-  WordListTranslationObject,
-  Language,
-} from '~/lib/types/word-types';
+import { WordListTranslationObject, Language } from '~/lib/types/word-types';
 
 import { getRelatedWords } from '~/server/languages-service/words';
-
-interface WordGeneratorProps {
-  languages: Language[];
-}
 
 const WordGenerator = () => {
   const wordInputRef = useRef<HTMLInputElement>(null);
@@ -94,27 +87,46 @@ const WordGenerator = () => {
   };
 
   return (
-    <div className="flex flex-col justify-start items-center h-full w-full">
-      <div className="flex justify-around w-1/2 mb-10">
-        <Input
-          placeholder="Category"
-          type="text"
-          ref={wordInputRef}
-          className="w-1/3"
-        />
+    <div className="flex justify-start items-center h-full w-full p-5">
+      <div className="flex flex-col justify-start items-center h-1/2 w-1/3 pr-4">
+        <div className="flex justify-between w-full mb-10">
+          <Input
+            placeholder="Category"
+            type="text"
+            ref={wordInputRef}
+            className="w-2/5"
+          />
 
-        <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-          <SelectTrigger className="w-1/3">
-            <SelectValue placeholder="Select a language" />
-          </SelectTrigger>
+          <Select
+            value={selectedLanguage}
+            onValueChange={setSelectedLanguage}
+          >
+            <SelectTrigger className="w-2/5">
+              <SelectValue placeholder="Select a language" />
+            </SelectTrigger>
 
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Languages</SelectLabel>
-              {renderLanguageOptionsList()}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Languages</SelectLabel>
+                {renderLanguageOptionsList()}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex justify-between w-full mb-10">
+          <Input
+            placeholder="Number of results"
+            type="text"
+            ref={wordInputRef}
+            className="w-2/5"
+          />
+
+          <div className="flex justify-between items-center w-2/5">
+            <Label htmlFor="include-audio-toggle">Include audio?</Label>
+            <Switch id="include-audio-toggle" />
+          </div>
+        </div>
 
         <Button
           onClick={() => fetchWordList()}
@@ -125,7 +137,7 @@ const WordGenerator = () => {
         </Button>
       </div>
 
-      <div className="w-1/2 h-full overflow-auto">
+      <div className="w-2/3 h-full overflow-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -142,3 +154,12 @@ const WordGenerator = () => {
 };
 
 export { WordGenerator };
+
+/*
+category
+language
+number of results
+include definitions?
+include audio?
+
+*/
