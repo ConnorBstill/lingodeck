@@ -125,7 +125,7 @@ const NavMenu = () => {
   };
 
   return (
-    <NavigationMenu>
+    <NavigationMenu className="h-12">
       <NavigationMenuList>
         {/* <NavigationMenuItem>
           <Link href="/main" legacyBehavior passHref>

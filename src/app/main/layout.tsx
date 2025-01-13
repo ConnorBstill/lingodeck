@@ -12,7 +12,7 @@ export default function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <main className="flex h-full justify-center items-start p-5">
+    <main className="h-[calc(100%-3rem)] flex justify-center items-start">
       {children}
     </main>
   );

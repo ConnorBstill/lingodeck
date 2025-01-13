@@ -125,7 +125,7 @@ const WordGenerator = () => {
         </Button>
       </div>
 
-      <div className="w-1/2">
+      <div className="w-1/2 h-full overflow-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -133,6 +133,7 @@ const WordGenerator = () => {
               <TableHead>Translation</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>{renderWordList()}</TableBody>
         </Table>
       </div>
