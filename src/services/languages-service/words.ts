@@ -5,8 +5,9 @@ export const getRelatedWords = async (
   selectedLanguage: string,
 ) => {
   try {
+    console.log('params', searchTerm, selectedLanguage);
     const response = await fetch(
-      `api/related-words?term=${encodeURIComponent(searchTerm)}&lang=${selectedLanguage}`,
+      `api/related-words?term=${encodeURIComponent(searchTerm)}&lang=${encodeURIComponent(selectedLanguage)}`,
     );
     const { data } = await response.json();
 

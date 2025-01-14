@@ -1,14 +1,10 @@
-// For Datamuse
-export interface WordObject {
-  word: string;
-  tags?: 'syn' | 'prop' | 'n' | 'v';
-  score?: number;
-}
-
-export interface WordListTranslationObject {
+export interface WordListObject {
   id: number;
   word: string;
   translation: string;
+  audio?: {
+    data: Buffer;
+  };
 }
 
 export interface Language {

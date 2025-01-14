@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 // import { auth, currentUser } from '@clerk/nextjs/server';
 
@@ -29,14 +29,16 @@ import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 
-import { WordListTranslationObject, Language } from '~/lib/types/word-types';
+import { WordListObject, Language } from '~/lib/types/word-types';
 
-import { getRelatedWords } from '~/server/languages-service/words';
+import { fetchRelatedWords } from '../../services/languages-service/words';
+import { fetchSpeechFromText } from '~/services/speech-service';
 
 const WordGenerator = () => {
   const wordInputRef = useRef<HTMLInputElement>(null);
 
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [isAudioIncluded, setIsAudioIncluded] = useState(false);
 
   const { data: languageOptions } = useQuery<Language[]>({
     queryKey: ['language-options'],
@@ -46,16 +48,22 @@ const WordGenerator = () => {
     data: wordList,
     refetch: fetchWordList,
     isRefetching: wordListLoading,
-  } = useQuery<WordListTranslationObject[]>({
+  } = useQuery<WordListObject[]>({
     queryKey: ['word-list'],
     queryFn: () =>
-      getRelatedWords(
-        encodeURIComponent(wordInputRef.current.value),
-        selectedLanguage,
-      ),
+      fetchRelatedWords(wordInputRef.current.value, selectedLanguage),
     enabled: false,
     placeholderData: [],
   });
+
+  const { data, refetch, isRefetching } = useQuery({
+    queryKey: ['audio-file'],
+    queryFn: () => fetchSpeechFromText,
+  });
+
+  const queryRelatedWord = () => {
+    fetchWordList();
+  };
 
   const renderLanguageOptionsList = () => {
     return languageOptions.map((language: Language) => {
@@ -71,16 +79,24 @@ const WordGenerator = () => {
 
   const renderWordList = (): any[] => {
     if (wordList.length) {
-      return wordList.map(
-        ({ id, word, translation }: WordListTranslationObject) => {
-          return (
-            <TableRow key={`${id}${word}`}>
-              <TableCell>{word}</TableCell>
-              <TableCell>{translation}</TableCell>
-            </TableRow>
-          );
-        },
-      );
+      return wordList.map(({ id, word, translation }: WordListObject) => {
+        // const audioBlob = new Blob(
+        //   [new Uint8Array(wordList[0].audio.data).buffer],
+        //   { type: 'audio/mp3' }
+        // );
+        // const url = URL.createObjectURL(audioBlob);
+
+        // console.log('url', url)
+        return (
+          <TableRow key={`${id}${word}`}>
+            <TableCell>{word}</TableCell>
+            <TableCell>{translation}</TableCell>
+            {/* <TableCell>
+                <audio src={url} controls></audio>
+              </TableCell> */}
+          </TableRow>
+        );
+      });
     } else {
       return [];
     }
@@ -118,18 +134,21 @@ const WordGenerator = () => {
           <Input
             placeholder="Number of results"
             type="text"
-            ref={wordInputRef}
+            // ref={wordInputRef}
             className="w-2/5"
           />
 
           <div className="flex justify-between items-center w-2/5">
             <Label htmlFor="include-audio-toggle">Include audio?</Label>
-            <Switch id="include-audio-toggle" />
+            <Switch
+              onCheckedChange={setIsAudioIncluded}
+              id="include-audio-toggle"
+            />
           </div>
         </div>
 
         <Button
-          onClick={() => fetchWordList()}
+          onClick={queryRelatedWord}
           disabled={wordListLoading}
           className="w-1/4"
         >
