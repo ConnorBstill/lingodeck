@@ -7,7 +7,7 @@ import {
   fetchObjectsByKey,
   generateKey,
   uploadMedia,
-} from '../../../services/aws-s3-service';
+} from '../services/aws-s3-service';
 
 export const GET = async (request: NextRequest) => {
   const userId = request.headers.get('User');

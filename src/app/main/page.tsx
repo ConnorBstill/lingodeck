@@ -4,7 +4,7 @@ import {
   QueryClient,
 } from '@tanstack/react-query';
 
-import { getLanguageOptionsServer } from '../../server/languages-service/languages';
+import { getLanguageOptionsServer } from '~/services/languages-service/languages';
 
 import { WordGenerator } from '~/components/client/WordGenerator';
 

@@ -1,6 +1,6 @@
 import { handleError } from '~/lib/utils';
 
-export const getRelatedWords = async (
+export const fetchRelatedWords = async (
   searchTerm: string,
   selectedLanguage: string,
 ) => {

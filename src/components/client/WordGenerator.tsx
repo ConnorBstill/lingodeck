@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import React, { useState, useRef, useEffect } from 'react';
+import { useMutation, useQuery, useQueries } from '@tanstack/react-query';
 // import { auth, currentUser } from '@clerk/nextjs/server';
 
 // import { SignedOut, SignedIn } from '@clerk/nextjs';
@@ -56,12 +56,17 @@ const WordGenerator = () => {
     placeholderData: [],
   });
 
-  const { data, refetch, isRefetching } = useQuery({
-    queryKey: ['audio-file'],
-    queryFn: () => fetchSpeechFromText,
+  const audioSamples = useQueries({
+    queries: wordList.map(({ id, translation }) => ({
+      queryKey: ['post', translation, id],
+      queryFn: fetchSpeechFromText,
+      staleTime: 300 * 1000,
+      enabled: !!wordList.length && isAudioIncluded,
+      refetchOnWindowFocus: false,
+    })),
   });
 
-  const queryRelatedWord = () => {
+  const handleGetRelatedWords = () => {
     fetchWordList();
   };
 
@@ -77,28 +82,50 @@ const WordGenerator = () => {
     });
   };
 
-  const renderWordList = (): any[] => {
-    if (wordList.length) {
-      return wordList.map(({ id, word, translation }: WordListObject) => {
-        // const audioBlob = new Blob(
-        //   [new Uint8Array(wordList[0].audio.data).buffer],
-        //   { type: 'audio/mp3' }
-        // );
-        // const url = URL.createObjectURL(audioBlob);
+  const renderAudioPlayer = (index: number) => {
+    const audioResponse = audioSamples[index].data;
+    if (wordList.length && isAudioIncluded && audioResponse) {
+      const audioBlob = new Blob(
+        [new Uint8Array(audioResponse.data.audio.data).buffer],
+        { type: 'audio/mp3' },
+      );
+      const url = URL.createObjectURL(audioBlob);
 
-        // console.log('url', url)
-        return (
-          <TableRow key={`${id}${word}`}>
-            <TableCell>{word}</TableCell>
-            <TableCell>{translation}</TableCell>
-            {/* <TableCell>
-                <audio src={url} controls></audio>
-              </TableCell> */}
-          </TableRow>
-        );
-      });
-    } else {
-      return [];
+      return (
+        <TableCell>
+          <audio src={url} controls></audio>
+        </TableCell>
+      );
+    }
+  };
+
+  const renderWordList = () => {
+    return wordList.map(({ id, word, translation }: WordListObject, i) => {
+      return (
+        <TableRow key={`${id}${word}`}>
+          <TableCell>{word}</TableCell>
+          <TableCell>{translation}</TableCell>
+          {renderAudioPlayer(i)}
+        </TableRow>
+      );
+    });
+  };
+
+  const renderTable = () => {
+    if (wordList.length) {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Word</TableHead>
+              <TableHead>Translation</TableHead>
+              {isAudioIncluded ? <TableHead>Translation</TableHead> : <></>}
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>{renderWordList()}</TableBody>
+        </Table>
+      );
     }
   };
 
@@ -134,7 +161,6 @@ const WordGenerator = () => {
           <Input
             placeholder="Number of results"
             type="text"
-            // ref={wordInputRef}
             className="w-2/5"
           />
 
@@ -148,7 +174,7 @@ const WordGenerator = () => {
         </div>
 
         <Button
-          onClick={queryRelatedWord}
+          onClick={handleGetRelatedWords}
           disabled={wordListLoading}
           className="w-1/4"
         >
@@ -156,18 +182,7 @@ const WordGenerator = () => {
         </Button>
       </div>
 
-      <div className="w-2/3 h-full overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Word</TableHead>
-              <TableHead>Translation</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>{renderWordList()}</TableBody>
-        </Table>
-      </div>
+      <div className="w-2/3 h-full overflow-auto">{renderTable()}</div>
     </div>
   );
 };
