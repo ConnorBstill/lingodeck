@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useMutation, useQuery, useQueries } from '@tanstack/react-query';
-// import { auth, currentUser } from '@clerk/nextjs/server';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
 
-// import { SignedOut, SignedIn } from '@clerk/nextjs';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { LoadingSpinner } from '../ui/loading-spinner';
 import {
   Select,
   SelectContent,
@@ -14,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { Button } from '../ui/button';
+import { Switch } from '../ui/switch';
 import {
   Table,
   TableBody,
@@ -23,47 +25,34 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
-import { LoadingSpinner } from '../ui/loading-spinner';
-import { toast } from 'sonner';
-import { Input } from '../ui/input';
-import { Switch } from '../ui/switch';
-import { Label } from '../ui/label';
 
-import { WordListObject, Language } from '~/lib/types/word-types';
+import { Language, WordListObject } from '~/lib/types/word-types';
 
-import { fetchRelatedWords } from '../../services/languages-service/words';
 import { fetchSpeechFromText } from '~/services/speech-service';
+import { fetchRelatedWords } from '../../services/languages-service/words';
+import useWordList from '~/hooks/word-generator/useWordList';
+import useAudioSamples from '~/hooks/word-generator/useAudioSamples';
 
 const WordGenerator = () => {
-  const wordInputRef = useRef<HTMLInputElement>(null);
-
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [isAudioIncluded, setIsAudioIncluded] = useState(false);
 
+  const wordInputRef = useRef<HTMLInputElement>(null);
+
+  const { wordList, fetchWordList, wordListLoading } = useWordList(
+    fetchRelatedWords,
+    wordInputRef,
+    selectedLanguage,
+  );
+
+  const { audioSamples } = useAudioSamples(
+    fetchSpeechFromText,
+    wordList,
+    isAudioIncluded,
+  );
+
   const { data: languageOptions } = useQuery<Language[]>({
     queryKey: ['language-options'],
-  });
-
-  const {
-    data: wordList,
-    refetch: fetchWordList,
-    isRefetching: wordListLoading,
-  } = useQuery<WordListObject[]>({
-    queryKey: ['word-list'],
-    queryFn: () =>
-      fetchRelatedWords(wordInputRef.current.value, selectedLanguage),
-    enabled: false,
-    placeholderData: [],
-  });
-
-  const audioSamples = useQueries({
-    queries: wordList.map(({ id, translation }) => ({
-      queryKey: ['post', translation, id],
-      queryFn: fetchSpeechFromText,
-      staleTime: 300 * 1000,
-      enabled: !!wordList.length && isAudioIncluded,
-      refetchOnWindowFocus: false,
-    })),
   });
 
   const handleGetRelatedWords = () => {

@@ -1,9 +1,10 @@
+import { WordListObject } from '~/lib/types/word-types';
 import { handleError } from '~/lib/utils';
 
 export const fetchRelatedWords = async (
   searchTerm: string,
   selectedLanguage: string,
-) => {
+): Promise<WordListObject[]> => {
   try {
     console.log('params', searchTerm, selectedLanguage);
     const response = await fetch(
@@ -11,8 +12,9 @@ export const fetchRelatedWords = async (
     );
     const { data } = await response.json();
 
-    return data;
+    return data as WordListObject[];
   } catch (err) {
     handleError('Error fetching word list', err);
+    return [];
   }
 };

@@ -3,15 +3,16 @@ import { Mutex } from 'async-mutex';
 import { handleError } from '~/lib/utils';
 
 import { AudioResponse } from '~/lib/types/audio-types';
+import { QueryFunctionContext } from '@tanstack/react-query';
 
 const ttsMutex = new Mutex();
 
 export const fetchSpeechFromText = async ({
   queryKey,
   signal,
-}: any): Promise<AudioResponse> => {
+}: QueryFunctionContext): Promise<AudioResponse> => {
   try {
-    const [, term] = queryKey;
+    const [, term] = queryKey as readonly [any, string];
 
     const response = await ttsMutex.runExclusive(async () => {
       return await fetch(
