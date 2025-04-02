@@ -2,21 +2,21 @@ import { ElevenLabsClient } from 'elevenlabs';
 
 export const generateTextToSpeechBuffer = async (
   text: string,
+  languageCode: string,
 ): Promise<Buffer> => {
   const audioClient = new ElevenLabsClient({
     apiKey: process.env.ELEVENLABS_API_KEY,
   });
 
-  // const models = await audioClient.models.getAll();
-
-  // console.log('models', models)
-
-  const audioStream = await audioClient.generate({
-    output_format: 'mp3_44100_128',
-    text,
-    model_id: 'eleven_flash_v2_5',
-    // language_code: 'fr',
-  });
+  const audioStream = await audioClient.textToSpeech.convert(
+    'a5n9pJUnAhX4fn7lx3uo',
+    {
+      output_format: 'mp3_44100_128',
+      text: text,
+      model_id: 'eleven_multilingual_v2',
+      // language_code: languageCode,
+    },
+  );
 
   const audioChunks = [];
 

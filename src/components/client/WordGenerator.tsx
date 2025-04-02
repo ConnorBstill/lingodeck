@@ -1,6 +1,6 @@
 'use client';
 
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 
 import { Button } from '../ui/button';
@@ -49,6 +49,7 @@ const WordGenerator = () => {
     fetchSpeechFromText,
     wordList,
     isAudioIncluded,
+    selectedLanguage,
   );
 
   const { data: languageOptions } = useQuery<Language[]>({
@@ -73,6 +74,7 @@ const WordGenerator = () => {
 
   const renderAudioPlayer = (index: number) => {
     const audioResponse = audioSamples[index].data;
+
     if (wordList.length && isAudioIncluded && audioResponse) {
       const audioBlob = new Blob(
         [new Uint8Array(audioResponse.data.audio.data).buffer],
@@ -83,6 +85,12 @@ const WordGenerator = () => {
       return (
         <TableCell>
           <audio src={url} controls></audio>
+        </TableCell>
+      );
+    } else if (wordList.length && isAudioIncluded && !audioResponse) {
+      return (
+        <TableCell>
+          <LoadingSpinner />
         </TableCell>
       );
     }
@@ -119,41 +127,32 @@ const WordGenerator = () => {
   };
 
   return (
-    <div className="flex justify-start items-center h-full w-full p-5">
-      <div className="flex flex-col justify-start items-center h-1/2 w-1/3 pr-4">
-        <div className="flex justify-between w-full mb-10">
-          <Input
-            placeholder="Category"
-            type="text"
-            ref={wordInputRef}
-            className="w-2/5"
-          />
+    <div className="flex flex-col justify-start items-center h-full w-full p-5">
+      <div className="flex flex-col justify-center h-1/2 w-2/3 pr-4">
+        <div className="flex flex-col justify-between w-full mb-10">
+          <div className="flex flex-row w-full mb-5">
+            <Input placeholder="Category" type="text" ref={wordInputRef} />
 
-          <Select
-            value={selectedLanguage}
-            onValueChange={setSelectedLanguage}
-          >
-            <SelectTrigger className="w-2/5">
-              <SelectValue placeholder="Select a language" />
-            </SelectTrigger>
+            <Select
+              value={selectedLanguage}
+              onValueChange={setSelectedLanguage}
+            >
+              <SelectTrigger className="mx-5">
+                <SelectValue placeholder="Select a language" />
+              </SelectTrigger>
 
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Languages</SelectLabel>
-                {renderLanguageOptionsList()}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Languages</SelectLabel>
+                  {renderLanguageOptionsList()}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
-        <div className="flex justify-between w-full mb-10">
-          <Input
-            placeholder="Number of results"
-            type="text"
-            className="w-2/5"
-          />
+            <Input placeholder="Number of results" type="text" />
+          </div>
 
-          <div className="flex justify-between items-center w-2/5">
+          <div className="flex justify-between items-center w-1/5">
             <Label htmlFor="include-audio-toggle">Include audio?</Label>
             <Switch
               onCheckedChange={setIsAudioIncluded}
@@ -177,12 +176,3 @@ const WordGenerator = () => {
 };
 
 export { WordGenerator };
-
-/*
-category
-language
-number of results
-include definitions?
-include audio?
-
-*/

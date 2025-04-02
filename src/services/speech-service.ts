@@ -7,16 +7,16 @@ import { QueryFunctionContext } from '@tanstack/react-query';
 
 const ttsMutex = new Mutex();
 
-export const fetchSpeechFromText = async ({
-  queryKey,
-  signal,
-}: QueryFunctionContext): Promise<AudioResponse> => {
+export const fetchSpeechFromText = async (
+  { queryKey, signal }: QueryFunctionContext,
+  languageCode: string,
+): Promise<AudioResponse> => {
   try {
     const [, term] = queryKey as readonly [any, string];
 
     const response = await ttsMutex.runExclusive(async () => {
       return await fetch(
-        `api/text-to-speech?term=${encodeURIComponent(term)}`,
+        `api/text-to-speech?term=${encodeURIComponent(term)}&lang=${encodeURIComponent(languageCode)}`,
         { signal },
       );
     });
