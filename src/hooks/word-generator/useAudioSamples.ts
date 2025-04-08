@@ -1,16 +1,23 @@
-import { QueryFunctionContext, useQueries } from '@tanstack/react-query';
-import { AudioResponse } from '~/lib/types/audio-types';
+import {
+  QueryFunctionContext,
+  useQueries,
+  useQuery,
+} from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
+
+import {
+  isAudioIncludedAtom,
+  selectedLanguageAtom,
+} from '~/store/wordlist-parameters';
+
+import { fetchSpeechFromText } from '~/services/speech-service';
+
 import { WordListObject } from '~/lib/types/word-types';
 
-const useAudioSamples = (
-  fetchSpeechFromText: (
-    { queryKey, signal }: QueryFunctionContext,
-    languageCode: string,
-  ) => Promise<AudioResponse>,
-  wordList: WordListObject[],
-  isAudioIncluded: boolean,
-  languageCode: string,
-) => {
+const useAudioSamples = (wordList: WordListObject[]) => {
+  const isAudioIncluded = useAtomValue(isAudioIncludedAtom);
+  const languageCode = useAtomValue(selectedLanguageAtom);
+
   const audioSamples = useQueries({
     queries: wordList.map(({ id, translation }) => ({
       queryKey: ['post', translation, id],

@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from '~/components/ui/sonner';
 import { NavMenu } from '~/components/ui/navigation-menu';
 
+import { Provider } from 'jotai';
 import { ThemeProvider } from './providers/theme-provider';
 import { QueryProviders } from './providers/query-provider';
 
@@ -25,20 +26,29 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
     >
+      {/* <head>
+        <script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        />
+      </head> */}
+
       <body className="h-full">
         <QueryProviders>
-          <ClerkProvider>
-            <ThemeProvider
-              attribute="class"
-              // defaultTheme="system"
-              // enableSystem
-              disableTransitionOnChange
-            >
-              <NavMenu />
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </ClerkProvider>
+          <Provider>
+            <ClerkProvider>
+              <ThemeProvider
+                attribute="class"
+                // defaultTheme="system"
+                // enableSystem
+                disableTransitionOnChange
+              >
+                <NavMenu />
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </ClerkProvider>
+          </Provider>
         </QueryProviders>
       </body>
     </html>

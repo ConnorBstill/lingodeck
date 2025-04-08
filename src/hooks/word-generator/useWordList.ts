@@ -1,23 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
-import { MutableRefObject } from 'react';
-import { WordListObject } from '~/lib/types/word-types';
 
-const useWordList = (
-  fetchRelatedWords: (
-    searchTerm: string,
-    selectedLanguage: string,
-  ) => Promise<WordListObject[]>,
-  wordInputRef: MutableRefObject<HTMLInputElement>,
-  selectedLanguage: string,
-) => {
+import { fetchRelatedWords } from '~/services/languages-service/words';
+import { useAtomValue } from 'jotai';
+import {
+  listCategoryAtom,
+  selectedLanguageAtom,
+} from '~/store/wordlist-parameters';
+
+const useWordList = () => {
+  const category = useAtomValue(listCategoryAtom);
+  const selectedLanguage = useAtomValue(selectedLanguageAtom);
+
   const {
     data: wordList,
     refetch: fetchWordList,
     isRefetching: wordListLoading,
   } = useQuery({
     queryKey: ['word-list'],
-    queryFn: () =>
-      fetchRelatedWords(wordInputRef.current.value, selectedLanguage),
+    queryFn: () => fetchRelatedWords(category, selectedLanguage),
     enabled: false,
     placeholderData: [],
   });
